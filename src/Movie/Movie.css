@@ -1,0 +1,12 @@
+.movie {
+    text-align: center;
+}
+.movie__poster {
+    display: inline-block;
+    border-radius: 2%;
+    width: 100%;
+}
+
+.movie__title {
+    font-size: 1em;
+}

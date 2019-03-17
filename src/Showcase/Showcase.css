@@ -1,0 +1,19 @@
+.showcase{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, 14em);
+    grid-gap: .5em;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.showcase__item {
+    border: solid 1px lightgrey;
+    border-radius: 2px;
+    padding: 1em;
+}
+
+.showcase__item--featured{
+    border-color: red;
+    background-color: blue;
+}
