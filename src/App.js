@@ -1,5 +1,10 @@
 import React from 'react';
-import Movies from './Movies/Movies';
+import {BrowserRouter} from 'react-router-dom'
+
+import Routes from './Routes/Routes';
 
 export default () =>
-    <Movies />
+<BrowserRouter>
+    <Routes />
+</BrowserRouter>
+    
