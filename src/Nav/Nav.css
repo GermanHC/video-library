@@ -1,0 +1,28 @@
+.menu {
+    width: 100%;
+    position: fixed;
+    padding: 1em;
+    display: inline-block;
+    -webkit-box-shadow: 0 8px 6px -6px #999;
+    -moz-box-shadow: 0 8px 6px -6px #999;
+    box-shadow: 0 8px 6px -6px #999;
+    z-index: 999;
+    background: whitesmoke;
+    opacity: 0.98;
+}
+
+.menu_link {
+    text-decoration: none;
+}
+
+.menu__options {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    display: flex;
+}
+
+.menu__option {
+    cursor: pointer;
+    padding: 0 .5em;
+}

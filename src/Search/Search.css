@@ -1,0 +1,21 @@
+.search__form {
+    padding: 70px 0;
+    margin: 0;
+}
+.search__box{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    width: 100vw;
+    height: 100vh;
+    background-color: whitesmoke;
+    color: #455A64;
+    font-size: 1.6rem;
+    line-height: 1.8;
+    margin-bottom: 20px;
+}
+.showcase{
+    padding: 5px 0;
+    margin: 0;
+}

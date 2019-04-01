@@ -2,15 +2,20 @@
     display: grid;
     grid-template-columns: repeat(auto-fit, 14em);
     grid-gap: .5em;
-    padding: 0;
-    margin: 0;
     list-style: none;
+    position: relative;
+    z-index: 99;
+    background: whitesmoke;
 }
 
 .showcase__item {
     border: solid 1px lightgrey;
     border-radius: 2px;
     padding: 1em;
+    background: white;
+    -webkit-box-shadow: 0 0.2px 0.2px 0.2px #999;
+    -moz-box-shadow: 0 0.2px 0.2px 0.2px #999;
+    box-shadow: 0 0.2px 0.2px 0.2px #999;
 }
 
 .showcase__item--featured{

@@ -1,6 +1,10 @@
 import React from 'react'
+import { Redirect } from 'react-router-dom'
 
-class Login extends React.Component {
+import LoginContext from './LoginContext'
+import './Login.css';
+
+export class Login extends React.Component {
     state = {
         hasChanges: false,
         user: '',
@@ -10,7 +14,7 @@ class Login extends React.Component {
     render() {
         const { user, password } = this.state;
         return (
-            <form onSubmit={this.login}>
+            <form onSubmit={this.login} className="login__form">
                 <label>
                     Usuario:&nbsp;
                 <input name='user' value={user} onChange={this.update} />
@@ -19,20 +23,26 @@ class Login extends React.Component {
                     Contraseña:&nbsp;
                 <input name='password' type='password' value={password} onChange={this.update} />
                 </label>
-                <input type="submit" disabled={!this.state.hasChanges} value='Login' />
+                <input type='submit' disabled={this.state.busy || !this.state.hasChanges} value='Login' />
                 {
-                    this.state.error &&
+                this.state.error &&
+                    <p>El usuario y la contraseña son requeridos</p>
+                }
+                {
+                this.state.loginError &&
                     <p>Usuario o contraseña incorrectos</p>
                 }
             </form>
         )
     }
-    update = event => this.setState({
-        error: false,
-        hasChanges: true,
-        [event.target.name]: event.target.type === 'checkbox'
-            ? event.target.checked
-            : event.target.value
+
+    update = event => 
+        this.setState({
+            error: false,
+            hasChanges: true,
+            [event.target.name]: event.target.type === 'checkbox'
+                ? event.target.checked
+                : event.target.value
     })
 
     login = async event => {
@@ -41,21 +51,21 @@ class Login extends React.Component {
         if (user.trim().length === 0 || password.trim().length === 0) {
             return this.setState({ error: true, hasChanges: false })
         }
-        //this.setState({busy: true})
-        //const response = await fetch(USERS_URL)
-        //const {results: users} = await response.json()
-        //const found = users.find(candidate =>
-        //          candidate.login.username = user &&
-        //          candidate.login.password = password
-        //)
-        //this.setState({busy:false})
-        //if (!found) {
-        // return this.setState({loginError: true})
-        //}
-        //alert(JSON.stringfy(found))
-        //this.props.onLogin(found);
-        //alert(JSON.stringify(this.state));
-    }
+        this.setState({ busy: true })
+        try {
+        void await this.props.onLogin({ user, password })
+        } catch (loginError) {
+            return this.setState({ loginError: true, busy: false })
+            }  
+        }
 }
 
-export default Login
+export default props =>
+<LoginContext.Consumer>
+  {
+    ({ login, logged }) =>
+      logged
+        ? <Redirect to='/' />
+        : <Login onLogin={login} />
+  }
+</LoginContext.Consumer>

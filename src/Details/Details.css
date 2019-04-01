@@ -1,0 +1,32 @@
+.details__film {
+    top: 53px;
+    padding: 10px 10px;
+    position: relative;
+    z-index: 99;
+    width:100%;
+    display: flex;
+}
+
+.meta__movie {
+    padding: 10px 10px;
+    width: 100%;
+}
+
+.details__sub-title{
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.details__sub-title_item{
+    float: left;
+    display: block;
+    text-align: center;
+    padding: 2px;
+    text-decoration: none;
+}
+
+.details__sub-title_item:first-child{
+    font-weight: bold;
+}
