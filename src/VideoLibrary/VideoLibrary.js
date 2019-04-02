@@ -27,6 +27,8 @@ export default class extends React.Component {
               findMovieByID: this.findMovieByID,
               findMovieByQuery: this.findMovieByQuery,
               collections: this.state.collections,
+              addFilmToCollection: this.addFilmToCollection,
+              addCollection: this.addCollection,
               findCollections: this.findCollections,
               login: this.login,
               logout: this.logout,
@@ -80,27 +82,6 @@ export default class extends React.Component {
         localStorage.removeItem('user')
     }
     
-    addPost = post => {
-        post.date = new Date()
-        const previousState = this.state
-        const uuid = previousState.user.login.uuid
-        const nextState = {
-            ...previousState,
-            posts: {
-            ...previousState.posts,
-            [uuid]: [
-                post,
-                ...previousState.posts[uuid]
-            ]
-            }
-        }
-        this.setState(nextState)
-        localStorage.setItem(
-            'posts',
-            JSON.stringify(nextState.posts)
-        )
-    }
-
     _addUser = user => {
         const previousState = this.state
         const prevUsers = previousState.users ? previousState.users : []
@@ -200,6 +181,74 @@ export default class extends React.Component {
             : []
         collections = collections === undefined && []
         return collections
+    }
+    
+    findFilmInCollection = (MovieId, Collection ) => {
+        debugger
+        var collectItem = {
+            MovieId: MovieId,
+            Value:-1
+        }
+        const { collections } = this.state
+        if(collections !== [] && collections.find(Collection))
+        {
+            const auxCollection = collections.find(Collection)
+            const auxCollectItem = auxCollection.find(MovieId)
+            collectItem.Value = auxCollectItem.Value && -1
+        }
+        return collectItem;
+    }
+
+    addFilmToCollection = (MovieId, Collection, Value) =>{
+        debugger
+        var collectItem = {
+            MovieId: MovieId,
+            Value: Value
+        }
+        const previousState = this.state
+        if(previousState.collections !== [] && previousState.collections.find(Collection)) 
+        {
+            const nextState = {
+                ...previousState,
+                collections:{
+                    ...previousState.collections,
+                    [Collection]: [
+                        collectItem,
+                        ...previousState.collections[Collection]
+                    ]
+                }
+            }
+            this.setState(nextState)
+            localStorage.setItem(
+                'collections',
+                JSON.stringify(nextState.collections)
+            )
+        }
+
+        if(previousState.collections !== [] || !previousState.collections.find(Collection)) 
+        {
+            debugger
+            this.addCollection(Collection)
+            this.addFilmToCollection(MovieId, Collection, Value)
+        }
+    }
+
+    addCollection = Collection =>{
+        debugger
+        const previousState = this.state
+        const nextState = {
+            ...previousState,
+            collections:{
+                Collection,
+                ...previousState.collections,
+            }
+        }
+
+        this.setState(nextState)
+        localStorage.setItem(
+            'collections',
+            JSON.stringify(nextState.collections)
+        )
     }
 
     _guid() {

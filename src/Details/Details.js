@@ -3,35 +3,62 @@ import React from 'react'
 import RateFilm from '../RateFilm/RateFilm'
 import Movie from '../Movie/Movie'
 import './Details.css'
+import LoginContext from '../Login/LoginContext';
 
 class Details extends React.Component {
     state = {
-        id: this.props.match.params.id,
-        movies: JSON.parse(localStorage.getItem('movies')) || [],
-        moviesSearch: JSON.parse(localStorage.getItem('moviesSearch')) || [],
-        genres: localStorage.getItem('genres') !== "undefined" ? JSON.parse(localStorage.getItem('genres')) : []
-    }
-    
+        id: this.props.id,
+        movies: this.props.movies,
+        moviesSearch: this.props.moviesSearch,
+        genres: this.props.genres,
+        collections: this.props.collections,
+        foundRated: {MovieId: this.props.id, Value: -1}
+     }
+
+     async componentDidMount() {
+        this.setState({ loading: true })
+        try {
+          const results = await this.props.findFilmInCollection( this.state.id, "RatedCollection" )
+          if(results.Value !== -1){
+            this.setState({ foundRated: results })
+          }
+        } catch (error) {
+          this.setState({ error: true })
+        } finally {
+          this.setState({ loading: false })
+        }
+      }
+
     onStarClickHalfStar(nextValue, prevValue, name, e) {
-            const xPos = (e.pageX - e.currentTarget.getBoundingClientRect().left) / e.currentTarget.offsetWidth;
-        
-            if (xPos <= 0.5) {
-              nextValue -= 0.5;
-            }
-        
-           this.setState({rating_half_star: nextValue});
+        const xPos = (e.pageX - e.currentTarget.getBoundingClientRect().left) / e.currentTarget.offsetWidth;
+        debugger
+        if (xPos <= 0.5) {
+            nextValue -= 0.5;
+        }
+        const nextRate = {
+            MovieId: foundRated.MovieId,
+            Value: nextValue
+        }
+        this.setState({foundRated: nextValue});
     }
     
+    async updateRate() {
+"CONTINUAR AQUI FALTA LLAMAR A FUNCION ADDFILMINCOLLECTION QUE AÑADE EL NUEVO RATE A LA COLECCION RatedCollection"
+"LLAMAR ESTA FUNCION DESDE onStarClickHalfStar"
+    }
+
     render() {
         
         const movie = (this.state.movies && this.state.movies.find(mov =>
             mov.id ===  Number(this.state.id))) || ((this.state.moviesSearch && this.state.moviesSearch.find(mov =>
                 mov.id ===  Number(this.state.id)))
         )
-
+        
+        const movieFoundRated =  
+        const results = await this.props.findMovies()
         const rateDetails = {
             rateDB: movie.vote_average / 2,
-            myRating: this.state.rating_half_star 
+            myRating: this.state.myRating
             }  
 
     return(
@@ -57,7 +84,6 @@ class Details extends React.Component {
                     </div>
                     <br />
                     <div className="details__rating">
-                        <em>Rating</em> {movie.vote_average} 
                         <RateFilm details={ rateDetails } onStarClick={this.onStarClickHalfStar.bind(this)} ></RateFilm>
                     </div>
                 </div>
@@ -66,4 +92,18 @@ class Details extends React.Component {
     }
 }
 
-export default Details
+export default props =>
+    <LoginContext.Consumer>
+      {
+       ({movies, moviesSearch, genres, collections, findFilmInCollection, addFilmToCollection }) =>
+        <Details 
+            id={props.match.params.id} 
+            movies= {movies}
+            moviesSearch= {moviesSearch}
+            findFilmInCollection= {findFilmInCollection}
+            addFilmToCollection= {addFilmToCollection}
+            collections= {collections}
+            genres={genres}
+        />
+      }         
+    </LoginContext.Consumer>
