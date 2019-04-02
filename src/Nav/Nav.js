@@ -14,7 +14,7 @@ export default props =>
                 <Link className='menu__link' to='/search'>Search</Link>
             </li>
             <li className='menu__option'>
-                <Link className='menu__link' to='/'>Movies</Link>
+                <Link className='menu__link' to='/collections'>Collections</Link>
             </li>
             <LoginContext.Consumer>
                 {

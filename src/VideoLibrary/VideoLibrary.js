@@ -11,7 +11,8 @@ export default class extends React.Component {
         user: JSON.parse(localStorage.getItem('user')),
         movies: (localStorage.getItem('movies') !== "undefined" && localStorage.getItem('movies') !== null )? JSON.parse(localStorage.getItem('movies')) : [],
         moviesSearch: (localStorage.getItem('moviesSearch') !== "undefined" && localStorage.getItem('moviesSearch') !== null) ? JSON.parse(localStorage.getItem('moviesSearch')) : [],
-        genres: localStorage.getItem('genres') !== "undefined" ? JSON.parse(localStorage.getItem('genres')) : []
+        genres: localStorage.getItem('genres') !== "undefined" ? JSON.parse(localStorage.getItem('genres')) : [],
+        collections: (localStorage.getItem('collections') !== "undefined" && localStorage.getItem('collections') !== null )? JSON.parse(localStorage.getItem('collections')) : []
     }
     render () {
         return (
@@ -25,6 +26,8 @@ export default class extends React.Component {
               findMovies: this.findMovies,
               findMovieByID: this.findMovieByID,
               findMovieByQuery: this.findMovieByQuery,
+              collections: this.state.collections,
+              findCollections: this.findCollections,
               login: this.login,
               logout: this.logout,
               addPost: this.addPost
@@ -146,7 +149,7 @@ export default class extends React.Component {
         const foundMovie = movies && movies.find(mov =>
             mov.id === props
         )
-     debugger
+      
         if(movies.length === 0 || foundMovie.length === 0)
         {
             const MOVIE_ID_URL = `https://api.themoviedb.org/3/movie/${props}?${API_KEY}&language=en-US`;
@@ -188,6 +191,15 @@ export default class extends React.Component {
             JSON.stringify(genresFound)
         )
         return genresFound
+    }
+
+    findCollections = async () => {
+        debugger
+        var collections = JSON.parse(localStorage.getItem('VideoLibrary')) ? 
+            JSON.parse(localStorage.getItem('VideoLibrary')).collections 
+            : []
+        collections = collections === undefined && []
+        return collections
     }
 
     _guid() {

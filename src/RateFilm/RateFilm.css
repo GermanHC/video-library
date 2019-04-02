@@ -1,0 +1,11 @@
+.ratefilm {
+   margin-left: 20;
+}
+
+.ratefilm__moviedb {
+    font-size: 18;
+}
+
+.ratefilm__myrate {
+    font-size: 20;
+}
