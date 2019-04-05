@@ -30,6 +30,7 @@ export default class extends React.Component {
               addFilmToCollection: this.addFilmToCollection,
               addCollection: this.addCollection,
               findCollections: this.findCollections,
+              findFilmInCollection: this.findFilmInCollection,
               login: this.login,
               logout: this.logout,
               addPost: this.addPost
@@ -175,7 +176,6 @@ export default class extends React.Component {
     }
 
     findCollections = async () => {
-        debugger
         var collections = JSON.parse(localStorage.getItem('VideoLibrary')) ? 
             JSON.parse(localStorage.getItem('VideoLibrary')).collections 
             : []
@@ -183,40 +183,51 @@ export default class extends React.Component {
         return collections
     }
     
-    findFilmInCollection = (MovieId, Collection ) => {
-        debugger
+    findFilmInCollection = async (params) => {
+        const {MovieId, Collection} = params
         var collectItem = {
             MovieId: MovieId,
             Value:-1
         }
         const { collections } = this.state
-        if(collections !== [] && collections.find(Collection))
+        if(collections.length !== 0 && collections.length !== undefined) 
         {
-            const auxCollection = collections.find(Collection)
-            const auxCollectItem = auxCollection.find(MovieId)
-            collectItem.Value = auxCollectItem.Value && -1
+            const auxCollection = collections.find(c => c.name===Collection)
+            const auxCollectItem = auxCollection.movies.find(m =>m.MovieId===MovieId)
+            collectItem.Value = auxCollectItem ? auxCollectItem.Value : -1
         }
         return collectItem;
     }
 
-    addFilmToCollection = (MovieId, Collection, Value) =>{
-        debugger
+    addFilmToCollection = async (params) =>{
+        const {MovieId, Collection, Value} = params
         var collectItem = {
             MovieId: MovieId,
             Value: Value
         }
         const previousState = this.state
-        if(previousState.collections !== [] && previousState.collections.find(Collection)) 
+        var nextState=null
+        debugger
+        if(previousState.collections.length !== 0 && previousState.collections.length !== undefined) 
         {
-            const nextState = {
+            var newCollection= previousState.collections.find(c => c.name===Collection)
+            if(newCollection != null){
+                newCollection.movies=newCollection.movies.filter(c=>c.MovieId!==MovieId)
+                newCollection.movies={...newCollection.movies, collectItem}
+                previousState.collections=previousState.collections.filter(item =>item.name !== Collection)
+            }else{
+                previousState.collections.push({
+                    name: Collection,
+                    movies:[collectItem]
+                })
+                newCollection = previousState.collections.find(c => c.name===Collection)
+            }
+            nextState = {
                 ...previousState,
-                collections:{
+                collections:[
                     ...previousState.collections,
-                    [Collection]: [
-                        collectItem,
-                        ...previousState.collections[Collection]
-                    ]
-                }
+                    newCollection
+                ]
             }
             this.setState(nextState)
             localStorage.setItem(
@@ -225,30 +236,47 @@ export default class extends React.Component {
             )
         }
 
-        if(previousState.collections !== [] || !previousState.collections.find(Collection)) 
+        if(nextState === null)
         {
+            if((this.state.collections.length === 0 || this.state.collections.length === undefined) || (this.state.collections.length > 0 && !this.state.collections.find(c=>c.name===Collection)))
+            {
             debugger
-            this.addCollection(Collection)
-            this.addFilmToCollection(MovieId, Collection, Value)
+            this.addCollection(Collection).bind(this)
+            this.addFilmToCollection(params).bind(this)
+            }
         }
     }
 
     addCollection = Collection =>{
         debugger
-        const previousState = this.state
-        const nextState = {
-            ...previousState,
-            collections:{
-                Collection,
-                ...previousState.collections,
-            }
+        const collectionItem = {
+            name: Collection,
+            movies:[]
         }
-
-        this.setState(nextState)
-        localStorage.setItem(
-            'collections',
-            JSON.stringify(nextState.collections)
-        )
+        const previousState = this.state
+        var prevCollections = previousState.collections ? previousState.collections : []
+        var newCollection = prevCollections.find(c => c.name===Collection)
+        
+        if(newCollection===undefined)
+        {
+            const nextState = {
+                ...previousState,
+                collections:[
+                    ...prevCollections,
+                    collectionItem
+                ]
+            }
+    
+            this.setState(nextState)
+            localStorage.setItem(
+                'collections',
+                JSON.stringify(nextState.collections)
+            )
+            const collections = nextState.collections
+            this.setState(collections)
+        }
+        
+        
     }
 
     _guid() {

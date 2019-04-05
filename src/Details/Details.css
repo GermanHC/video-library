@@ -19,7 +19,7 @@
   overflow: hidden;
 }
 
-.details__sub-title_item{
+.details__sub-title>li{
     float: left;
     display: block;
     text-align: center;

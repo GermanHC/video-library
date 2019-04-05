@@ -12,39 +12,43 @@ class Details extends React.Component {
         moviesSearch: this.props.moviesSearch,
         genres: this.props.genres,
         collections: this.props.collections,
+        findFilmInCollection: this.props.findFilmInCollection,
+        addFilmToCollection: this.props.addFilmToCollection,
         foundRated: {MovieId: this.props.id, Value: -1}
      }
 
      async componentDidMount() {
         this.setState({ loading: true })
         try {
-          const results = await this.props.findFilmInCollection( this.state.id, "RatedCollection" )
-          if(results.Value !== -1){
-            this.setState({ foundRated: results })
-          }
-        } catch (error) {
-          this.setState({ error: true })
-        } finally {
-          this.setState({ loading: false })
-        }
+            const params ={MovieId: this.state.id, Collection: "RatedCollection"}
+            const results = await this.state.findFilmInCollection( params )
+            if(results.Value !== -1){
+                this.setState({ foundRated: results })
+            }
+            } catch (error) {
+            this.setState({ error: true })
+            } finally {
+            this.setState({ loading: false })
+            }
       }
 
     onStarClickHalfStar(nextValue, prevValue, name, e) {
         const xPos = (e.pageX - e.currentTarget.getBoundingClientRect().left) / e.currentTarget.offsetWidth;
-        debugger
         if (xPos <= 0.5) {
             nextValue -= 0.5;
         }
         const nextRate = {
-            MovieId: foundRated.MovieId,
+            MovieId: this.state.foundRated.MovieId,
             Value: nextValue
         }
+        this.updateRate(nextRate)
+        
         this.setState({foundRated: nextValue});
     }
     
-    async updateRate() {
-"CONTINUAR AQUI FALTA LLAMAR A FUNCION ADDFILMINCOLLECTION QUE AÑADE EL NUEVO RATE A LA COLECCION RatedCollection"
-"LLAMAR ESTA FUNCION DESDE onStarClickHalfStar"
+    async updateRate(nextRate) {
+        const params ={MovieId: nextRate.MovieId, Collection: "RatedCollection", Value: nextRate.Value}
+        void await this.state.addFilmToCollection(params)
     }
 
     render() {
@@ -53,13 +57,11 @@ class Details extends React.Component {
             mov.id ===  Number(this.state.id))) || ((this.state.moviesSearch && this.state.moviesSearch.find(mov =>
                 mov.id ===  Number(this.state.id)))
         )
-        
-        const movieFoundRated =  
-        const results = await this.props.findMovies()
+       
         const rateDetails = {
             rateDB: movie.vote_average / 2,
-            myRating: this.state.myRating
-            }  
+            myRating: this.state.foundRated.Value > 0 ? this.state.foundRated.Value : 0
+        }  
 
     return(
            <div className='details__film'>
@@ -67,10 +69,10 @@ class Details extends React.Component {
                 <div className="meta__movie">
                     <h3>{movie.title}</h3>
                     <ul className="details__sub-title">
-                        <li className="details__sub-title_item">{ new Date(movie.release_date).getFullYear()}</li>
+                        <li>{ new Date(movie.release_date).getFullYear()}</li>
                         {
                             movie.genre_ids.map((genre, i) => 
-                                <li className="details__sub-title_item">
+                                <li key={genre}>
                                     {
                                       this.state.genres.find(obj => obj.id === genre).name + (i!==(movie.genre_ids.length-1) ? ',' : '.')
                                     }
@@ -88,7 +90,7 @@ class Details extends React.Component {
                     </div>
                 </div>
            </div>  
-      )
+        )
     }
 }
 
