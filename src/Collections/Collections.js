@@ -42,8 +42,8 @@ class Collections extends Component {
                     ? (
                     <ul className='posts'>
                     {
-                    <Showcase  keyFn={collection => collection.id} items={collections} render={collection =>
-                        <Link to={`/collectiondetails/${collection.id}`}>
+                    <Showcase  keyFn={collection => collection.name} items={collections} render={collection =>
+                        <Link to={`/collectiondetails/${collection.name}`}>
                           <Collection details={collection} />
                         </Link>
                       } />

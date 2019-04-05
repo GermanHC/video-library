@@ -30,6 +30,7 @@ export default class extends React.Component {
               addFilmToCollection: this.addFilmToCollection,
               addCollection: this.addCollection,
               findCollections: this.findCollections,
+              findCollectionMovies: this.findCollectionMovies,
               findFilmInCollection: this.findFilmInCollection,
               login: this.login,
               logout: this.logout,
@@ -179,8 +180,36 @@ export default class extends React.Component {
         var collections = JSON.parse(localStorage.getItem('VideoLibrary')) ? 
             JSON.parse(localStorage.getItem('VideoLibrary')).collections 
             : []
-        collections = collections === undefined && []
+        if (collections === undefined) {
+             collections = []
+        }
+        
         return collections
+    }
+
+    findCollectionMovies = async (param) => {
+        const Collection = param
+        var foundCollection = null
+        var movies= []
+        if(this.state.collections.length !== 0 && this.state.collections.length !== undefined) 
+        {  
+            foundCollection = this.state.collections.find(c => c.name===Collection)
+            if(foundCollection != null)
+            {
+                 const moviesFound = await this.findMovies()
+                 for (let n = 0; n < foundCollection.movies.length; n++) {
+                      
+                     // eslint-disable-next-line no-loop-func
+                     const movie = moviesFound.find(mov=>
+                        // eslint-disable-next-line eqeqeq
+                        mov.id == foundCollection.movies[n].MovieId
+                        );
+                    movies.push(movie)
+                 }
+            }
+        }
+        
+        return movies
     }
     
     findFilmInCollection = async (params) => {
@@ -207,7 +236,6 @@ export default class extends React.Component {
         }
         const previousState = this.state
         var nextState=null
-        debugger
         if(previousState.collections.length !== 0 && previousState.collections.length !== undefined) 
         {
             var newCollection= previousState.collections.find(c => c.name===Collection)
@@ -240,7 +268,6 @@ export default class extends React.Component {
         {
             if((this.state.collections.length === 0 || this.state.collections.length === undefined) || (this.state.collections.length > 0 && !this.state.collections.find(c=>c.name===Collection)))
             {
-            debugger
             this.addCollection(Collection).bind(this)
             this.addFilmToCollection(params).bind(this)
             }
@@ -248,7 +275,6 @@ export default class extends React.Component {
     }
 
     addCollection = Collection =>{
-        debugger
         const collectionItem = {
             name: Collection,
             movies:[]

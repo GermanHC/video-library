@@ -7,6 +7,7 @@ import Details from '../Details/Details'
 import requireLogin from '../Login/requiresLogin'
 import Search from '../Search/Search';
 import Collections from '../Collections/Collections';
+import CollectionMovies from '../Collection/CollectionMovies';
 
 const requiresLogin = requireLogin('/login')
 
@@ -17,5 +18,6 @@ export default props =>
     <Route exact path='/details/:id' component={requiresLogin(Details)} />
     <Route exact path='/search' component={requiresLogin(Search)} />
     <Route exact path='/collections' component={requiresLogin(Collections)} />
+    <Route exact path='/collectiondetails/:name' component={requiresLogin(CollectionMovies)} />
     <Route component={() => <p>Error 404, no hemos encontrado lo que buscas</p>} />
 </Switch>
