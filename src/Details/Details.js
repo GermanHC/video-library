@@ -19,7 +19,6 @@ class Details extends React.Component {
 
      async componentDidMount() {
         this.setState({ loading: true })
-        debugger
         try {
             const params ={MovieId: this.state.id, Collection: "RatedCollection"}
             const results = await this.state.findFilmInCollection( params )

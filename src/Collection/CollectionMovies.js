@@ -22,7 +22,6 @@ class CollectionMovies extends Component {
     }
     render() {
       const {collectionMovies, loading, error } = this.state
-      debugger
       if (error) {
         return <p>Error 500!</p>
       }
